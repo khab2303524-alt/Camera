@@ -1,7 +1,6 @@
 // lib/pushNotifications.ts
 // Đăng ký Expo Push Token và lưu lên Firebase RTDB: users/{uid}/push = { token, enabled, platform, updatedAt }
 import Constants from "expo-constants";
-import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { ref, set, update } from "firebase/database";
 import { Platform } from "react-native";
@@ -18,7 +17,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const ALERT_CHANNEL_ID = "overheat-alerts";
+// Channel settings are persisted by Android. Use a new id so an old muted or
+// low-importance channel cannot silently disable alerts after an app update.
+export const ALERT_CHANNEL_ID = "overheat-alerts-v2";
 
 async function setupAndroidChannel() {
   if (Platform.OS !== "android") return;
@@ -33,7 +34,6 @@ async function setupAndroidChannel() {
 
 /** Xin quyền + lấy token. Trả về null nếu không đủ điều kiện. */
 export async function getExpoPushToken(): Promise<string | null> {
-  if (!Device.isDevice) return null; // emulator không nhận push
   await setupAndroidChannel();
 
   const { status: existing } = await Notifications.getPermissionsAsync();
@@ -41,13 +41,17 @@ export async function getExpoPushToken(): Promise<string | null> {
   if (existing !== "granted") {
     status = (await Notifications.requestPermissionsAsync()).status;
   }
-  if (status !== "granted") return null;
+  if (status !== "granted") {
+    throw new Error("Quyền thông báo chưa được cấp cho ứng dụng.");
+  }
 
   const projectId =
     Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
-  const { data } = await Notifications.getExpoPushTokenAsync(
-    projectId ? { projectId } : undefined
-  );
+  if (!projectId) {
+    throw new Error("Không tìm thấy Expo project ID để đăng ký push token.");
+  }
+
+  const { data } = await Notifications.getExpoPushTokenAsync({ projectId });
   return data;
 }
 

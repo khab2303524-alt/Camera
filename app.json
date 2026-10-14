@@ -16,6 +16,9 @@
     },
     "android": {
       "package": "com.khaslana.camera",
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.png",
@@ -43,7 +46,14 @@
         }
       ],
       "@react-native-google-signin/google-signin",
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/logo.png",
+          "color": "#1F5CA9",
+          "defaultChannel": "overheat-alerts-v2"
+        }
+      ],
       [
         "expo-build-properties",
         {
