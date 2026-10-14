@@ -44,7 +44,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
-      {/* 1. Màn hình Giám sát */}
+
       <Tabs.Screen
         name="index"
         options={{
@@ -59,22 +59,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 2. Màn hình Thống kê */}
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          title: 'Thống kê',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? 'stats-chart' : 'stats-chart-outline'}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      {/* 4. Màn hình Cài đặt */}
       <Tabs.Screen
         name="settings"
         options={{
