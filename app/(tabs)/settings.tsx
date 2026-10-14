@@ -516,7 +516,6 @@ export default function SettingsScreen() {
                 keyboardType="numeric"
                 placeholder={NGUONG_CONFIG[editing].placeholder}
                 placeholderTextColor={COLOR_PLACEHOLDER}
-                selectTextOnFocus
                 autoFocus
               />
               <Text style={styles.tuneUnitInner}>°C</Text>
