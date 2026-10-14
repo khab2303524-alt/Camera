@@ -1,4 +1,6 @@
+import { appAlert } from "@/components/AppDialog";
 import { useAuth } from "@/context/AuthContext";
+import { disablePush, enablePush } from "@/lib/pushNotifications";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   EmailAuthProvider,
@@ -24,9 +26,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { appAlert } from "@/components/AppDialog";
 import { db } from "../../config/firebaseConfig";
-import { disablePush, enablePush } from "@/lib/pushNotifications";
 
 // Bảng màu đồng bộ toàn bộ app (Tone CTU & UI Template)
 const CTU_NavyBlue = "#1F5CA9";
@@ -65,14 +65,14 @@ const NGUONG_CONFIG: Record<
     title: "Ngưỡng cảnh báo",
     icon: "warning-outline",
     placeholder: "VD: 50",
-    hint: "Hệ thống sẽ cảnh báo (trạng thái trên app và đường cảnh báo trên biểu đồ) khi nhiệt độ đo được vượt quá giá trị này.",
+    hint: "Hệ thống sẽ cảnh báo qua thông báo đẩy khi nhiệt độ đo được vượt quá giá trị này.",
   },
   nguyhiem: {
     path: "nhietdo/nguyhiem",
     title: "Ngưỡng bật chuông",
     icon: "alarm-outline",
     placeholder: "VD: 70",
-    hint: "Chuông trên thiết bị sẽ reo khi nhiệt độ đo được đạt giá trị này (cũng là đường nguy hiểm trên biểu đồ). Nên đặt cao hơn ngưỡng cảnh báo.",
+    hint: "Chuông trên thiết bị sẽ reo khi nhiệt độ đo được đạt giá trị này. Nên đặt cao hơn ngưỡng cảnh báo.",
   },
 };
 
