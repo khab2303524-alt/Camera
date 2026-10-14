@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
-import { DataSnapshot, off, onValue, ref, set } from "firebase/database";
+import { DataSnapshot, off, onValue, ref } from "firebase/database";
 import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
 import { db } from "@/config/firebaseConfig";
@@ -15,8 +15,8 @@ export function TemperatureAlertMonitor() {
     const alertRef = ref(db, "giamsat/canhbao");
     const dangerRef = ref(db, "giamsat/nguyhiem");
     let pushEnabled = false;
-    let resettingAlert = false;
-    let resettingDanger = false;
+    let lastAlertState = false;
+    let lastDangerState = false;
 
     const handleEnabled = (snapshot: DataSnapshot) => {
       pushEnabled = snapshot.val() === true;
@@ -40,36 +40,23 @@ export function TemperatureAlertMonitor() {
     };
 
     const handleAlert = async (snapshot: DataSnapshot) => {
-      if (snapshot.val() !== true || resettingAlert) return;
-
-      resettingAlert = true;
-      try {
+      const isAlert = snapshot.val() === true;
+      if (isAlert && !lastAlertState) {
         if (pushEnabled) {
           await notify("Cảnh báo quá nhiệt", "Nhiệt độ đã vượt ngưỡng cảnh báo.", "temperature-alert");
         }
-        // Raspberry Pi bật cờ; app reset ngay sau khi đã xử lý lần cảnh báo này.
-        await set(alertRef, false);
-      } catch (error) {
-        console.error("Lỗi khi xử lý và reset cảnh báo nhiệt độ:", error);
-      } finally {
-        resettingAlert = false;
       }
+      lastAlertState = isAlert;
     };
 
     const handleDanger = async (snapshot: DataSnapshot) => {
-      if (snapshot.val() !== true || resettingDanger) return;
-
-      resettingDanger = true;
-      try {
+      const isDanger = snapshot.val() === true;
+      if (isDanger && !lastDangerState) {
         if (pushEnabled) {
           await notify("NGUY HIỂM: nhiệt độ quá cao", "Nhiệt độ đã vượt ngưỡng nguy hiểm!", "temperature-danger");
         }
-        await set(dangerRef, false);
-      } catch (error) {
-        console.error("Lỗi khi xử lý và reset nguy hiểm nhiệt độ:", error);
-      } finally {
-        resettingDanger = false;
       }
+      lastDangerState = isDanger;
     };
 
     onValue(enabledRef, handleEnabled, (error) => {
