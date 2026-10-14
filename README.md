@@ -18,7 +18,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 3. Prebuild app
 
-   npx expo prebuild --clean
+   npx expo prebuild -p android
 
 4. Build apk
 
